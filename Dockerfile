@@ -1,11 +1,12 @@
-FROM ubuntu
+FROM ubuntu:12.04
 MAINTAINER Manfred Touron m@42.am
 
-RUN apt-get update
-RUN apt-get install -y openssh-server
+RUN dpkg-divert --local --rename --add /sbin/initctl
+RUN ln -s /bin/true /sbin/initctl
 
-RUN mkdir /var/run/sshd
-RUN echo "root:root" | chpasswd
+RUN apt-get -qq install openssh-server && apt-get clean
+
+RUN mkdir -p /var/run/sshd && echo "root:root" | chpasswd
 
 CMD ["/usr/sbin/sshd", "-D"]
 
